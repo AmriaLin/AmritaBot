@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 from amrita_core.agent.strategy import AgentStrategy
 from amrita_core.builtins.agent import (
-    HybridReActAgentStrategy,
     NoActionAgentStrategy,
     ReActAgentStrategy,
 )
@@ -21,6 +20,11 @@ __all__ = ["build_workflow", "select_agent_strategy"]
 def select_agent_strategy(name: str) -> type[AgentStrategy]:
     """根据配置选择 Agent 执行策略类
 
+    ``hybrid-react`` 归并到 ``ReActAgentStrategy``：AmritaCore 1.0 移除了
+    ``HybridReActAgentStrategy``，而前者现在同样以
+    ``assistant(tool_calls)`` + ``tool`` 消息对表达调用与结果，
+    ``get_category()`` 仍为 ``agent-mixed``。
+
     Args:
         name: 策略名（react / hybrid-react / no-action）
 
@@ -31,10 +35,8 @@ def select_agent_strategy(name: str) -> type[AgentStrategy]:
         ValueError: 未知策略名
     """
     match name:
-        case "react":
+        case "react" | "hybrid-react":
             return ReActAgentStrategy
-        case "hybrid-react":
-            return HybridReActAgentStrategy
         case "no-action":
             return NoActionAgentStrategy
         case _:

@@ -3,9 +3,8 @@ import random
 import sys
 import traceback
 
-from amrita_core import UniResponse, UniResponseUsage, call_completion
+from amrita_core import UniResponse, call_completion
 from amrita_core.types import Message as CoreMessage
-from amrita_sense.hook.event import BaseEvent
 from amrita_sense.hook.matcher import MatcherFactory
 from nonebot import logger
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment
@@ -20,45 +19,15 @@ from amrita.utils.admin import send_to_admin
 
 from ..check_rule import FakeEvent
 from ..config import config_manager
+from ..events import PokeSendError, PokeSendMessageEvent
 from ..utils.app import CachedGroupDataRepository as CGDR
 from ..utils.functions import (
     get_friend_name,
     split_message_into_chats,
 )
-from ..utils.libchat import add_usage, get_tokens, usage_enough
+from ..utils.libchat import add_usage, usage_enough
 from ..utils.lock import get_group_lock, get_private_lock
 from ..utils.preset import resolve_preset
-
-
-class PokeSendError(BaseException):
-    """钩子抛出以静默拦截 poke 回复发送（不回复、不报错）"""
-
-
-class PokeSendMessageEvent(BaseEvent[str]):
-    """poke 回复发送前触发的事件（与 chat 的 SendMessageEvent 完全独立）
-
-    content: 构建好的 MessageSegment，钩子可直接修改或替换
-    """
-
-    def __init__(
-        self,
-        content: Message,
-        *,
-        event: PokeNotifyEvent,
-        matcher: Matcher,
-        bot: Bot,
-    ):
-        self.content = content
-        self.event = event
-        self.matcher = matcher
-        self.bot = bot
-
-    def get_event_type(self) -> str:
-        return "POKE_SEND_MESSAGE"
-
-    @property
-    def event_type(self) -> str:
-        return "POKE_SEND_MESSAGE"
 
 
 async def _trigger_poke_send(
@@ -242,18 +211,8 @@ async def process_poke_event(
     if response is None:
         return "(发生了错误)"
 
-    # 记录token使用情况
-    tokens = get_tokens(send_messages, response)
-    assert tokens is not None, "tokens is None"
-    input_tokens = tokens.prompt_tokens if hasattr(tokens, "prompt_tokens") else 0
-    output_tokens = (
-        tokens.completion_tokens if hasattr(tokens, "completion_tokens") else 0
-    )
-    usage = UniResponseUsage(
-        prompt_tokens=input_tokens,
-        completion_tokens=output_tokens,
-        total_tokens=input_tokens + output_tokens,
-    )
+    #  usage 由 provider 上报，缺失时 add_usage 只计次不计 token
+    usage = response.usage
 
     insights = await InsightsModel.get()
     add_usage(insights, usage)

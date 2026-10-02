@@ -1,6 +1,6 @@
 [project]
 name = "amrita"
-version = "1.9.1"
+version = "1.10.0"
 description = "A powerful Agent bot powered by NoneBot2"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
@@ -12,18 +12,17 @@ dependencies = [
     "aiomysql>=0.3.2",
     "aiosqlite>=0.21.0",
     "alembic>=1.16.4",
-    "amrita-core[jieba]>=0.13.1, <0.14.0",
-    "amrita-sense>=0.4.2",
+    "amrita-core>=1.0.0,<2.0.0",
+    "amrita-sense>=1.0.0,<2.0.0",
     "async-lru>=2.0.5",
     "bcrypt>=4.3.0",
-    "faskill[amrita]>=0.2.0",
-    "fastmcp>=2.14.1",
+    "faskill[amrita]>=0.3.0",
     "importlib>=1.0.4",
     "jinja2>=3.1.6",
     "nb-cli>=1.6.0",
     "nonebot-adapter-onebot>=2.4.6",
-    "nonebot-plugin-amrita>=0.3.0",
-    "nonebot-plugin-orm>=0.8.3",           # See https://github.com/nonebot/plugin-orm/issues/33
+    "nonebot-plugin-amrita>=0.4.0",
+    "nonebot-plugin-orm>=0.8.3",     # See https://github.com/nonebot/plugin-orm/issues/33
     "nonebot-plugin-uniconf>=0.1.3",
     "nonebot2[fastapi]>=2.4.3",
     "pillow>=12.0.0",
@@ -41,9 +40,9 @@ dependencies = [
 amrita = "amrita.__main__:main"
 
 [project.urls]
-"Homepage" = "https://github.com/LiteSuggarDEV/Amrita"
-"Source" = "https://github.com/LiteSuggarDEV/Amrita"
-"Issue Tracker" = "https://github.com/LiteSuggarDEV/Amrita/issues"
+"Homepage" = "https://github.com/AmritaBot/AmritaBot"
+"Source" = "https://github.com/AmritaBot/AmritaBot"
+"Issue Tracker" = "https://github.com/AmritaBot/AmritaBot/issues"
 
 [tool.setuptools.packages.find]
 include = ["amrita", "amrita.*"]
@@ -73,6 +72,8 @@ amrita = { workspace = true }
 [tool.ruff]
 line-length = 88
 target-version = "py310"
+# website/ 是 amrita-docs 文档站子模块，不参与本仓库的 lint
+extend-exclude = ["website"]
 
 [tool.ruff.lint]
 select = [
@@ -113,3 +114,5 @@ typeCheckingMode = "standard"
 venvPath = "."
 venv = ".venv"
 executionEnvironments = [{ root = ".", pythonVersion = "3.10" }]
+# website/ 是 amrita-docs 文档站子模块，不参与本仓库的类型检查
+exclude = ["website"]

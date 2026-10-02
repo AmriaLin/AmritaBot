@@ -9,6 +9,7 @@ require("nonebot_plugin_amrita")
 
 from . import (
     config,
+    events,
     hooks,
     matcher_manager,
     models,
@@ -22,6 +23,7 @@ from .utils.llm_tools import context_tools
 __all__ = [
     "config",
     "context_tools",
+    "events",
     "hooks",
     "matcher_manager",
     "models",
@@ -33,7 +35,7 @@ __plugin_meta__ = PluginMetadata(
     name="Amrita LLM聊天模块",
     description="Amrita内置的LLM聊天能力",
     usage="https://amrita.suggar.top/amrita/plugins/suggarchat/",
-    homepage="https://github.com/AmritaBot/Amrita",
+    homepage="https://github.com/AmritaBot/AmritaBot",
     type="application",
     supported_adapters={"~onebot.v11"},
 )
